@@ -1,3 +1,4 @@
+
 import asyncio
 import json
 import os
@@ -94,12 +95,14 @@ def generar_audio(texto: str, voz: str, rate: str) -> bytes:
         return b""
 
 
-def evaluar_resumen_llm(parrafo: str, resumen: str, nivel: str) -> dict | None:
-    """Pide a Groq un feedback pedagógico del resumen (JSON)."""
+def evaluar_resumen_llm(parrafo: str, resumen: str, nivel: str):
+    """Pide a Groq un feedback pedagógico del resumen (JSON).
+    Devuelve el feedback, o un dict con la clave 'error' explicando qué falló."""
     api_key = st.secrets.get("LLM_API_KEY") if "LLM_API_KEY" in st.secrets \
         else os.environ.get("LLM_API_KEY")
     if not api_key:
-        return None
+        return {"error": "API key no encontrada. Verifica LLM_API_KEY en "
+                         "Settings → Secrets y reinicia la app."}
 
     system = (
         "You are a British English teacher assessing a summary. "
@@ -131,11 +134,18 @@ def evaluar_resumen_llm(parrafo: str, resumen: str, nivel: str) -> dict | None:
             },
             timeout=60,
         )
-        respuesta.raise_for_status()
+        if respuesta.status_code != 200:
+            return {"error": f"Groq respondió {respuesta.status_code}: "
+                             f"{respuesta.text[:300]}"}
         contenido = respuesta.json()["choices"][0]["message"]["content"]
         return json.loads(contenido)
-    except Exception:
-        return None
+    except requests.exceptions.Timeout:
+        return {"error": "La petición a Groq tardó demasiado (timeout). "
+                         "Inténtalo de nuevo."}
+    except json.JSONDecodeError:
+        return {"error": "Groq devolvió una respuesta no válida en JSON."}
+    except Exception as e:
+        return {"error": f"Error inesperado: {e}"}
 
 # ---------------- Interfaz ----------------
 col_config, col_main = st.columns([1, 3])
@@ -165,6 +175,9 @@ with col_config:
         st.divider()
         st.warning("⚠️ Añade tu LLM_API_KEY en Secrets para el feedback "
                    "inteligente.")
+    else:
+        st.divider()
+        st.caption("🤖 Feedback inteligente: activo")
 
     st.divider()
     st.markdown(
@@ -260,8 +273,9 @@ with col_main:
 
         # Feedback pedagógico (LLM)
         if feedback is None:
-            st.info("ℹ️ Feedback inteligente no disponible: añade tu "
-                    "LLM_API_KEY en los Secrets de la app.")
+            st.info("ℹ️ Feedback inteligente no disponible.")
+        elif "error" in feedback:
+            st.error(f"🤖 **Feedback inteligente falló:** {feedback['error']}")
         else:
             st.markdown("## 🤖 Feedback del profesor")
 
