@@ -54,7 +54,7 @@ VOICES = {
     "🇬🇧 Voz femenina (Libby)": "en-GB-LibbyNeural",
 }
 
-GROQ_MODEL = "llama-3.3-70b-versatile"
+GROQ_MODEL = "openai/gpt-oss-120b"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 # ---------------- Estado de sesión ----------------
