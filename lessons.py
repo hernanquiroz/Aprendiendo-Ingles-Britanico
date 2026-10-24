@@ -1,0 +1,542 @@
+# Banco de lecciones — Learn British English
+# Estructura: { "nivel": [ {"titulo": ..., "parrafo": ...}, ... ] }
+
+LECCIONES = {
+    "A1 – Principiante": [
+        {"titulo": "My Family",
+         "parrafo": ("My name is Tom. I live in a small flat in London with my "
+                     "family. My mother is a nurse and my father is a bus driver. "
+                     "I have one sister. Her name is Emma. She is seven years old. "
+                     "We have a cat called Whiskers. Every morning, I eat toast and "
+                     "drink tea for breakfast.")},
+        {"titulo": "A Day at School",
+         "parrafo": ("I go to school by bus. My school is near the park. Lessons "
+                     "start at nine o'clock. My favourite subject is history. At "
+                     "lunchtime, I eat sandwiches with my friends. After school, I "
+                     "play football in the garden. I do my homework before dinner.")},
+        {"titulo": "My House",
+         "parrafo": ("My house has two floors. On the ground floor, there is a "
+                     "kitchen, a living room and a small toilet. On the first floor, "
+                     "there are two bedrooms and a bathroom. My bedroom is small but "
+                     "nice. I have a bed, a desk and a big window. The garden is "
+                     "behind the house. There are many flowers in spring.")},
+        {"titulo": "My Best Friend",
+         "parrafo": ("My best friend is called Daniel. He lives next door. Daniel "
+                     "is tall and has brown hair. We go to the same school and sit "
+                     "together in class. We like playing computer games and riding "
+                     "our bicycles in the park. He is very funny and always helps "
+                     "me with my maths homework.")},
+        {"titulo": "My Favourite Animal",
+         "parrafo": ("My favourite animal is the dog. Dogs are friendly and clever. "
+                     "My aunt has a dog called Alfie. He is a small brown dog with "
+                     "big ears. Alfie likes running in the park and playing with a "
+                     "ball. He eats special dog food. When I visit my aunt, Alfie "
+                     "always jumps and wags his tail. He is very happy.")},
+        {"titulo": "In the Supermarket",
+         "parrafo": ("On Saturdays, my mum and I go to the supermarket. We take a "
+                     "shopping trolley and walk between the aisles. We buy bread, "
+                     "milk, cheese, apples and bananas. My mum always checks the "
+                     "prices. I like the sweet aisle, but she says sweets are not "
+                     "good for my teeth. We pay at the till and carry the bags home.")},
+        {"titulo": "My Daily Routine",
+         "parrafo": ("I wake up at seven o'clock every morning. First, I have a "
+                     "shower and brush my teeth. Then I get dressed and eat "
+                     "breakfast with my family. I walk to the bus stop and go to "
+                     "school. In the evening, I watch television, have dinner and "
+                     "read a book. I go to bed at nine o'clock. I sleep eight hours "
+                     "every night.")},
+        {"titulo": "The Weather Today",
+         "parrafo": ("Today the weather is cloudy. In Britain, the weather changes "
+                     "very often. In the morning it rains, in the afternoon the sun "
+                     "shines, and in the evening it is cold. People always carry an "
+                     "umbrella. In winter, it sometimes snows. Children love snow "
+                     "because they can make a snowman. In summer, it is warm and "
+                     "sunny in the park.")},
+        {"titulo": "At the Weekend",
+         "parrafo": ("At the weekend, I do many things. On Saturday morning, I play "
+                     "football with my team. In the afternoon, I visit my "
+                     "grandparents. My grandmother makes biscuits and we drink tea "
+                     "together. On Sunday, my family goes for a walk in the "
+                     "countryside. In the evening, I prepare my school bag for "
+                     "Monday. I love the weekends.")},
+        {"titulo": "My Bedroom",
+         "parrafo": ("My bedroom is my favourite place in the house. The walls are "
+                     "light blue. There is a comfortable bed near the window. I have "
+                     "a small desk where I do my homework. My books are on a shelf "
+                     "above the desk. There is a lamp and a photo of my family on "
+                     "the wall. I keep my toys in a big box under my bed. My room is "
+                     "always tidy.")},
+    ],
+
+    "A2 – Elemental": [
+        {"titulo": "A Weekend in the Countryside",
+         "parrafo": ("Last weekend, we visited my grandmother in the countryside. "
+                     "The weather was lovely, so we went for a long walk across the "
+                     "fields. We saw sheep and cows everywhere. My grandmother "
+                     "cooked a traditional Sunday roast with vegetables from her "
+                     "garden. It was delicious. On Sunday evening, we drove back "
+                     "home feeling tired but very happy.")},
+        {"titulo": "My Favourite Hobby",
+         "parrafo": ("I really enjoy reading books about British history. I usually "
+                     "read in the evenings, after finishing my homework. At the "
+                     "moment, I am reading a novel about the Victorians. Reading "
+                     "helps me learn new vocabulary and improves my writing too. "
+                     "Last month, I joined a reading club at my school. We meet "
+                     "every Wednesday and talk about the books we have read.")},
+        {"titulo": "A Trip to the Seaside",
+         "parrafo": ("Last summer, my family and I went to Brighton for a week. We "
+                     "travelled by train, which took about an hour. Every day, we "
+                     "walked along the beach and ate fish and chips. My brother "
+                     "swam in the sea, but the water was freezing! We visited the "
+                     "famous pier and played in the amusement arcade. It was one of "
+                     "the best holidays of my life.")},
+        {"titulo": "My First Job",
+         "parrafo": ("When I was sixteen, I got my first job at a local bakery. I "
+                     "worked on Saturday mornings, serving customers and cleaning "
+                     "the shop. The work was harder than I expected, but my "
+                     "colleagues were kind and taught me a lot. With my first "
+                     "salary, I bought a new bicycle. That experience showed me how "
+                     "important it is to earn your own money.")},
+        {"titulo": "A Rainy Afternoon",
+         "parrafo": ("It was raining heavily, so we decided to stay at home. My "
+                     "sister suggested watching an old film, and my father made "
+                     "popcorn in the kitchen. We sat together on the sofa under "
+                     "warm blankets. Halfway through the film, the lights went out "
+                     "because of the storm. We ended up telling funny stories by "
+                     "candlelight until the electricity came back.")},
+        {"titulo": "Learning to Cook",
+         "parrafo": ("Last year, I decided to learn how to cook. At first, "
+                     "everything went wrong: I burnt the toast and undercooked the "
+                     "rice. However, I watched videos and practised every weekend. "
+                     "Now I can prepare a simple dinner for my family. Yesterday I "
+                     "made a shepherd's pie, and everybody said it tasted really "
+                     "good. Cooking is difficult, but very rewarding.")},
+        {"titulo": "The Lost Puppy",
+         "parrafo": ("While I was walking home from school, I found a small puppy "
+                     "sitting alone near the bus stop. It looked frightened and "
+                     "hungry, so I gave it some water and called the number on its "
+                     "collar. Twenty minutes later, a very grateful woman arrived. "
+                     "She had been looking for her puppy all afternoon. She thanked "
+                     "me and gave me a box of chocolates. I felt really proud.")},
+        {"titulo": "My Town",
+         "parrafo": ("I live in a medium-sized town in the north of England. There "
+                     "is a busy high street with shops, cafés and a library. The "
+                     "town also has a beautiful old church that was built three "
+                     "hundred years ago. On market days, farmers sell fresh fruit "
+                     "and vegetables in the square. Life here is quieter than in a "
+                     "big city, but I would not change it for anything.")},
+        {"titulo": "A Visit to the Museum",
+         "parrafo": ("Last month, our class visited the Natural History Museum in "
+                     "London. We saw dinosaur skeletons, precious stones and a "
+                     "life-sized model of a blue whale. The guide explained how "
+                     "fossils form over millions of years. I took many photos and "
+                     "bought a small dinosaur figure in the gift shop. It was a "
+                     "fascinating trip, and I learned more in one day than in a "
+                     "whole month of lessons.")},
+        {"titulo": "My Pet Rabbit",
+         "parrafo": ("My pet rabbit is called Clover. She has soft white fur and "
+                     "long ears. Every morning, I give her fresh vegetables and "
+                     "clean water. Rabbits need space to exercise, so we built a "
+                     "large hutch in the garden. Clover is very curious and follows "
+                     "me around the house. Taking care of an animal is a big "
+                     "responsibility, but it teaches you to be patient and caring.")},
+    ],
+
+    "B1 – Intermedio": [
+        {"titulo": "Working in a Café",
+         "parrafo": ("I have been working in a busy café in Manchester since "
+                     "January. Although it can be tiring, I love meeting customers "
+                     "from all over the world. My colleagues are friendly, and we "
+                     "often help each other during the busiest hours. The manager "
+                     "has taught me how to make the perfect cappuccino. In the "
+                     "future, I would like to open my own little tea shop by the "
+                     "seaside.")},
+        {"titulo": "The Weather in Britain",
+         "parrafo": ("British people are famous for talking about the weather, and "
+                     "there is a good reason for it: it changes constantly. One "
+                     "moment the sky is grey and it is drizzling, and the next the "
+                     "sun is shining. Because of this, most people carry an "
+                     "umbrella wherever they go, just in case. Forecasters try to "
+                     "predict the weather, but even they admit that in Britain you "
+                     "should always be prepared for a surprise.")},
+        {"titulo": "Moving to a New City",
+         "parrafo": ("Moving to a new city is exciting, but it can also be "
+                     "stressful. When I first arrived in Bristol, I did not know "
+                     "anybody, and everything seemed unfamiliar. However, I joined "
+                     "a local sports club and started attending language classes. "
+                     "Within a few months, I had made good friends and felt at "
+                     "home. If you ever move somewhere new, my advice is simple: "
+                     "say yes to every invitation.")},
+        {"titulo": "The Importance of Sleep",
+         "parrafo": ("Getting enough sleep is far more important than most people "
+                     "realise. While we sleep, our brains process the information "
+                     "we have learned during the day and our bodies repair "
+                     "themselves. Experts recommend between seven and nine hours "
+                     "per night for adults. Unfortunately, many people sacrifice "
+                     "sleep to watch television or scroll through their phones, "
+                     "which affects their concentration and mood the following "
+                     "day.")},
+        {"titulo": "A Traditional Christmas",
+         "parrafo": ("Christmas in Britain is full of traditions. Families decorate "
+                     "their houses with lights and a tree, and children hang "
+                     "stockings at the end of their beds. On Christmas Day, people "
+                     "exchange presents, pull crackers and eat roast turkey with "
+                     "sprouts and gravy. In the afternoon, many families watch the "
+                     "Queen's speech before falling asleep in front of the "
+                     "television. It is a day for eating too much and being "
+                     "grateful.")},
+        {"titulo": "Volunteering at the Shelter",
+         "parrafo": ("Every Saturday morning, I volunteer at an animal shelter near "
+                     "my home. When I started, I mainly cleaned the cages and fed "
+                     "the animals. Since then, I have learned how to look after "
+                     "injured birds and how to gain the trust of nervous dogs. The "
+                     "work is sometimes sad, but when an animal finds a new family, "
+                     "it makes everything worthwhile.")},
+        {"titulo": "Travelling by Train",
+         "parrafo": ("Travelling by train is one of the most pleasant ways to "
+                     "explore Britain. From the window, you can see rolling hills, "
+                     "historic towns and dramatic coastlines. Trains are generally "
+                     "punctual, although delays can happen during bad weather. "
+                     "Booking in advance is much cheaper than buying a ticket on "
+                     "the day. If you have never taken a long train journey across "
+                     "the countryside, you should definitely try it.")},
+        {"titulo": "Learning a Musical Instrument",
+         "parrafo": ("Two years ago, I decided to learn the piano. At the "
+                     "beginning, I could barely read the notes, and my fingers "
+                     "felt clumsy. I practised for thirty minutes every day, even "
+                     "when I did not feel like it. Now I can play several songs "
+                     "from memory. The secret, according to my teacher, is not "
+                     "talent but consistency. Progress is slow at first, but it "
+                     "always comes if you keep going.")},
+        {"titulo": "The Local Pub",
+         "parrafo": ("The pub has always been at the heart of British social life. "
+                     "It is not simply a place to drink; it is where friends meet, "
+                     "families have Sunday lunch and neighbours catch up on the "
+                     "local news. Many pubs organise quiz nights, which attract "
+                     "teams of regulars week after week. In small villages, the pub "
+                     "is often the only place where the whole community gathers, "
+                     "which explains why people fight so hard to save them.")},
+        {"titulo": "An Unforgettable Match",
+         "parrafo": ("Last month, I went to a football match at Wembley Stadium. "
+                     "The atmosphere was incredible: eighty thousand people "
+                     "singing, waving flags and cheering for their teams. The "
+                     "match was exciting from the first minute, and the winning "
+                     "goal came in the final seconds. When the referee blew the "
+                     "final whistle, half of the stadium exploded with joy while "
+                     "the other half sat in silence. I will never forget that "
+                     "night.")},
+    ],
+
+    "B2 – Intermedio alto": [
+        {"titulo": "The Importance of Public Libraries",
+         "parrafo": ("Public libraries have played a remarkable role in British "
+                     "society for centuries. Not only do they provide free access "
+                     "to books and the internet, but they also serve as community "
+                     "hubs where people of all ages can learn new skills. Despite "
+                     "budget cuts in recent years, many libraries have adapted by "
+                     "offering workshops, coding clubs and reading groups, which "
+                     "proves how valuable they remain to local communities "
+                     "throughout the country.")},
+        {"titulo": "Sustainable Travel",
+         "parrafo": ("More and more travellers are choosing sustainable options "
+                     "when planning their holidays. Rather than flying, some "
+                     "people now take the train across Europe, enjoying the "
+                     "scenery while reducing their carbon footprint. However, "
+                     "critics argue that slow travel is a luxury that not everyone "
+                     "can afford, which raises important questions about fairness "
+                     "in the movement towards greener tourism and who truly "
+                     "benefits from it.")},
+        {"titulo": "The Rise of Remote Work",
+         "parrafo": ("The pandemic transformed the way millions of people work. "
+                     "Offices that were once full of employees became empty almost "
+                     "overnight, and video calls replaced face-to-face meetings. "
+                     "Nowadays, many companies offer hybrid arrangements, "
+                     "allowing staff to split their time between home and the "
+                     "office. While some workers would never go back to commuting "
+                     "five days a week, others miss the social side of office life "
+                     "and struggle to separate work from rest at home.")},
+        {"titulo": "British Humour",
+         "parrafo": ("British humour can be puzzling for foreigners. It often "
+                     "relies on irony, understatement and self-deprecation, which "
+                     "means that a person complaining about the weather during a "
+                     "heatwave is probably joking. Where other cultures might "
+                     "express enthusiasm directly, the British tend to say the "
+                     "opposite of what they mean, expecting the listener to "
+                     "understand. Once you grasp this, everyday conversations "
+                     "become far more entertaining.")},
+        {"titulo": "The Debate About Exams",
+         "parrafo": ("Few topics divide teachers as much as examinations. "
+                     "Supporters argue that exams provide an objective measure of "
+                     "ability and prepare students for the pressure of adult life. "
+                     "Critics, on the other hand, claim that they reward memory "
+                     "rather than genuine understanding and disadvantage students "
+                     "who suffer from anxiety. Some schools have introduced "
+                     "coursework and projects as alternatives, yet most "
+                     "qualifications in Britain still depend heavily on final "
+                     "written papers.")},
+        {"titulo": "The Power of Small Habits",
+         "parrafo": ("We tend to believe that changing our lives requires dramatic "
+                     "decisions, yet research suggests otherwise. Tiny habits, "
+                     "repeated daily, gradually reshape our behaviour far more "
+                     "effectively than occasional bursts of motivation. Reading "
+                     "ten pages a day, for instance, adds up to more than a dozen "
+                     "books a year. The key is consistency rather than intensity: "
+                     "small actions that seem insignificant in isolation become "
+                     "extraordinary over time.")},
+        {"titulo": "Cities and the Housing Crisis",
+         "parrafo": ("Britain's major cities are facing a severe housing shortage. "
+                     "Property prices have risen far faster than wages, making it "
+                     "increasingly difficult for young people to buy their first "
+                     "home. As a result, a generation is renting well into their "
+                     "thirties. Governments have promised to build more affordable "
+                     "homes, but construction has not kept pace with demand. Many "
+                     "experts warn that unless radical measures are taken, "
+                     "inequality between generations will only deepen.")},
+        {"titulo": "The Return of the Bee",
+         "parrafo": ("Over the past few decades, Britain lost a significant "
+                     "proportion of its wild bees, largely due to intensive "
+                     "farming and the loss of meadows. Their decline matters "
+                     "enormously, since bees pollinate the crops that feed us. "
+                     "Recently, however, conservation projects have reported "
+                     "encouraging results: urban gardens, rooftop hives and "
+                     "wildflower corridors are helping several species recover. It "
+                     "is proof that even in cities, nature can bounce back if "
+                     "given a chance.")},
+        {"titulo": "In Defence of Boredom",
+         "parrafo": ("We fill every idle moment with our phones, yet boredom may "
+                     "deserve more respect than we give it. Psychologists have "
+                     "found that unstimulated minds wander into daydreams, which "
+                     "is precisely when creativity and problem-solving flourish. "
+                     "Many of history's greatest ideas emerged from long walks and "
+                     "quiet afternoons without entertainment. Perhaps, instead of "
+                     "escaping boredom at every opportunity, we should learn to "
+                     "tolerate it — our imagination might thank us for it.")},
+        {"titulo": "The Second-Hand Revolution",
+         "parrafo": ("Second-hand shopping has shed its old image and become "
+                     "mainstream, particularly among younger consumers. Charity "
+                     "shops, vintage markets and online marketplaces are thriving "
+                     "as people seek unique clothes at reasonable prices while "
+                     "reducing waste. The fashion industry is one of the world's "
+                     "biggest polluters, so choosing pre-owned garments is a "
+                     "genuinely sustainable choice. What began as a niche trend "
+                     "is quietly reshaping how an entire generation consumes.")},
+    ],
+
+    "C1 – Avanzado": [
+        {"titulo": "The Evolution of the English Language",
+         "parrafo": ("The English language has undergone profound transformations "
+                     "throughout its history, absorbing vocabulary from Latin, "
+                     "French and Norse, among countless other sources. What "
+                     "distinguishes British English from its American counterpart "
+                     "is not merely spelling or pronunciation, but subtle "
+                     "differences in idiom and register. Linguists contend that "
+                     "these variations, far from being deficiencies, enrich the "
+                     "language and reflect the cultural identity of their "
+                     "speakers.")},
+        {"titulo": "The Art of the Essay",
+         "parrafo": ("The essay remains one of the most demanding literary forms, "
+                     "requiring clarity of thought, elegance of expression and the "
+                     "courage to pursue an argument wherever it may lead. Its "
+                     "greatest practitioners, from Bacon to Orwell, understood "
+                     "that style is not decoration but thought itself made "
+                     "visible. To write well, Orwell argued, one must think "
+                     "clearly first; the muddled sentence is almost always the "
+                     "product of a muddled idea. Mastering the essay, therefore, "
+                     "means mastering the discipline of reasoning in public.")},
+        {"titulo": "On Walking",
+         "parrafo": ("Walking, that most ordinary of activities, has inspired a "
+                     "surprising amount of profound writing. From Wordsworth's "
+                     "rambles across the Lake District to modern psychogeographers "
+                     "drifting through city streets, writers have long sensed that "
+                     "thought moves at the pace of the body. There is something "
+                     "about putting one foot in front of the other that loosens "
+                     "the mind, allowing ideas to surface that no desk could ever "
+                     "summon. Perhaps that is why so many of our finest "
+                     "philosophers preferred muddy boots to cushioned armchairs.")},
+        {"titulo": "The Ethics of Artificial Intelligence",
+         "parrafo": ("As artificial intelligence becomes embedded in decisions "
+                     "ranging from medical diagnoses to recruitment, the ethical "
+                     "questions grow sharper. Should an algorithm be permitted to "
+                     "assess a person's creditworthiness, and who bears "
+                     "responsibility when it errs? Regulators are struggling to "
+                     "keep pace with technological change, and the danger is that "
+                     "systems trained on past data quietly perpetuate the "
+                     "prejudices embedded in it. What is at stake is nothing less "
+                     "than deciding which human values we delegate to machines.")},
+        {"titulo": "Cultural Heritage and Its Discontents",
+         "parrafo": ("Museums across Europe are confronting an uncomfortable "
+                     "inheritance. Many of their most treasured artefacts arrived "
+                     "through colonial channels whose legitimacy is now disputed, "
+                     "and campaigns for restitution are gaining momentum. "
+                     "Curators find themselves caught between scholarly duty and "
+                     "moral pressure, aware that the universal museum was founded "
+                     "on assumptions few still defend. How institutions navigate "
+                     "this reckoning may well define the relationship between "
+                     "culture and power in the coming decades.")},
+        {"titulo": "The Attention Economy",
+         "parrafo": ("In an age where attention is harvested and sold, the ability "
+                     "to concentrate has become a rare and valuable asset. Digital "
+                     "platforms are engineered by some of the world's brightest "
+                     "minds to capture our gaze, and they have succeeded beyond any "
+                     "propagandist's dreams. Critics warn that a civilisation "
+                     "unable to sustain attention will struggle to read deeply, "
+                     "think critically or deliberate together. Reclaiming our "
+                     "focus, they argue, is among the defining challenges of our "
+                     "era.")},
+        {"titulo": "The Celtic Revival",
+         "parrafo": ("In recent decades, languages once thought doomed have "
+                     "experienced an unexpected renaissance. Welsh, once banned "
+                     "from official life, now thrives in schools, broadcasting and "
+                     "public signage, while Scottish Gaelic and Cornish enjoy "
+                     "growing cultural prestige. This revival owes little to "
+                     "sentiment and much to policy: committed education, media "
+                     "investment and legal recognition. It demonstrates that "
+                     "language death is not inevitable, provided that communities "
+                     "and governments are willing to invest in their words.")},
+        {"titulo": "On Reading Old Books",
+         "parrafo": ("There is a peculiar pleasure in reading books written "
+                     "centuries ago, one that contemporary literature, for all its "
+                     "merits, cannot replicate. Old texts show us that our "
+                     "ancestors wrestled with the same anxieties we do — love, "
+                     "mortality, faith and ambition — while simultaneously "
+                     "revealing how radically our assumptions differ from theirs. "
+                     "The conversation across the centuries is, in the end, the "
+                     "best education in humility: it reminds us that our "
+                     "certainties, too, will one day look quaint.")},
+        {"titulo": "The Paradox of Choice",
+         "parrafo": ("Conventional wisdom holds that more choice means more "
+                     "freedom, yet psychologists have gathered compelling "
+                     "evidence to the contrary. Faced with an overwhelming array "
+                     "of options, people often experience paralysis, anxiety and "
+                     "regret, a phenomenon so common it has earned its own label. "
+                     "The satisfied consumer, it turns out, is frequently the one "
+                     "who decides quickly and stops comparing. Perhaps happiness "
+                     "lies not in having every possibility open, but in "
+                     "committing gracefully to some and letting the rest go.")},
+        {"titulo": "Gardens and the British Soul",
+         "parrafo": ("No other nation takes gardening quite so seriously as the "
+                     "British, and the reasons run deeper than hobby. The garden "
+                     "embodies a distinctive philosophy: patient negotiation with "
+                     "an unreliable climate, reverence for the modest and "
+                     "domestic, and a belief that beauty need not be grand to be "
+                     "profound. From Capability Brown's landscapes to the "
+                     "suburban allotment, gardening represents an ongoing "
+                     "conversation between order and wildness. To understand "
+                     "Britain, one could do worse than to observe what it grows.")},
+    ],
+
+    "C2 – Maestría": [
+        {"titulo": "On the Subtlety of Irony",
+         "parrafo": ("Irony, that most British of rhetorical devices, thrives on "
+                     "the tension between what is said and what is meant. Its "
+                     "deployment requires not only linguistic dexterity but also a "
+                     "sophisticated awareness of context and audience, for irony "
+                     "poorly executed is indistinguishable from sincerity. "
+                     "Scholars have long debated whether irony constitutes a "
+                     "defence mechanism against earnestness or, conversely, a "
+                     "vehicle through which uncomfortable truths may be uttered "
+                     "with plausible deniability. Either way, its mastery remains "
+                     "perhaps the surest hallmark of true fluency.")},
+        {"titulo": "The Problem of Consciousness",
+         "parrafo": ("Despite a century of Neuroscience and philosophy, the "
+                     "so-called 'hard problem' of consciousness remains stubbornly "
+                     "unresolved: why should physical processes give rise to "
+                     "subjective experience at all? Some theorists contend that "
+                     "consciousness is fundamental to the universe, while "
+                     "sceptics dismiss the question as confused. What is "
+                     "undeniable is that no framework currently available — "
+                     "physicalist, panpsychist or dualist — has succeeded in "
+                     "bridging the explanatory gap between matter and felt "
+                     "experience, leaving the mind as the frontier it has always "
+                     "been.")},
+        {"titulo": "The Architecture of Memory",
+         "parrafo": ("Memory, far from being a faithful archive, behaves more like "
+                     "a skilful forger, reconstructing the past anew with every "
+                     "recollection. Each act of remembering subtly rewrites the "
+                     "trace it retrieves, incorporating subsequent knowledge, "
+                     "mood and suggestion. This malleability, once considered a "
+                     "design flaw, is increasingly understood as adaptive: a "
+                     "memory system immune to revision would trap us forever in "
+                     "the literal past. The unsettling corollary, however, is "
+                     "that our most cherished recollections may be, in part, "
+                     "elegant fictions we have authored about ourselves.")},
+        {"titulo": "Elegy and the English Landscape",
+         "parrafo": ("Few literary traditions are so saturated with melancholy as "
+                     "the English elegy, in which landscape and loss become "
+                     "inextricable. From Gray's churchyard to Hardy's heaths and "
+                     "Larkin's provincial stations, the poetry of Britain finds "
+                     "in its very topography a vocabulary for grief: the fading "
+                     "light of autumn afternoons, the half-derelict village, the "
+                     "train that does not stop. This is not sentimentality but a "
+                     "species of tough-minded consolation, an insistence that "
+                     "sorrow, properly observed, can be made to yield a strange "
+                     "and enduring beauty.")},
+        {"titulo": "The Limits of Translation",
+         "parrafo": ("Every translation is an act of interpretive daring, since no "
+                     "language maps neatly onto another; each carries within it a "
+                     "distinct metaphysics, a way of slicing reality that resists "
+                     "transport. The translator must therefore betray — the "
+                     "Italian aphorism traduttore, traditore is unavoidable — but "
+                     "betray judiciously, deciding what may be sacrificed: "
+                     "cadence, connotation, wit or literal sense. The finest "
+                     "translations succeed not by erasing their own labour but by "
+                     "making audible, between the lines, the original's "
+                     "untranslatable music.")},
+        {"titulo": "On Moral Luck",
+         "parrafo": ("Philosophers have long been troubled by the observation that "
+                     "our moral judgements are hostage to fortune. Two drivers may "
+                     "be equally reckless, yet only one kills a child who runs "
+                     "into the road; we condemn him as we do not condemn the other, "
+                     "whose identical negligence merely went unpunished by chance. "
+                     "If character is what we can control and consequence is not, "
+                     "then our intuitions about praise and blame appear to be "
+                     "metaphysically incoherent. The problem exposes a deep "
+                     "tension between the justice we feel and the fairness we "
+                     "profess to want.")},
+        {"titulo": "The Sounds of Silence",
+         "parrafo": ("In contemporary discourse, silence is treated largely as a "
+                     "deficit to be filled, yet across traditions it has been "
+                     "revered as the very medium of insight. Quakers worship in "
+                     "expectant stillness; Trappists take vows of it; composers "
+                     "from Cage to Takemitsu have made its structure audible. "
+                     "Neuroscience, for its part, confirms what contemplatives "
+                     "always suspected: the brain is never silent, and what we "
+                     "call silence is rather a rare skill of attending to the "
+                     "mind's own unceasing murmur.")},
+        {"titulo": "Utopia and Its Shadow",
+         "parrafo": ("Every utopia, critics remind us, casts the shadow of its "
+                     "own dystopia: the dream of a perfected society has "
+                     "repeatedly licensed its opposite. The twentieth century "
+                     "provided devastating evidence that plans for human "
+                     "improvement, armed with the state's full power, can flatten "
+                     "the very plurality they claim to serve. And yet the "
+                     "utopian imagination can hardly be abandoned, for a "
+                     "civilisation incapable of envisioning alternatives resigns "
+                     "itself to administering the present indefinitely. The task, "
+                     "perhaps, is to utopianise modestly: to imagine better "
+                     "worlds without erecting them on foundations of doctrine.")},
+        {"titulo": "The Essay as Thought Experiment",
+         "parrafo": ("At its finest, the essay is less an argument than a "
+                     "laboratory: a place where hypotheses about life are "
+                     "conducted upon the page and their consequences observed in "
+                     "real time. Montaigne, the form's inventor, called his "
+                     "essays 'attempts' precisely because he understood writing "
+                     "as trialling oneself before an audience. This "
+                     "provisionality is the genre's enduring gift — the "
+                     "permission it grants to think in public, to follow a "
+                     "thought past the point of comfort, and to arrive at "
+                     "conclusions one had no intention of reaching.")},
+        {"titulo": "Language, Thought and the Sapir-Whorf Hypothesis",
+         "parrafo": ("The proposition that language determines thought, once "
+                     "fashionable and then ridiculed, has returned in subtler "
+                     "form. Evidence that grammatical gender shifts the "
+                     "associations of objects, or that languages lacking absolute "
+                     "directions foster remarkable spatial memory, suggests that "
+                     "tongues do not imprison minds but do gently bend them. The "
+                     "contemporary consensus — that languages influence rather "
+                     "than dictate cognition — is admittedly less dramatic than "
+                     "the original hypothesis, yet it retains its subversive "
+                     "edge: whoever masters several grammars acquires, perhaps, "
+                     "several ways of being a self.")},
+    ],
+}
