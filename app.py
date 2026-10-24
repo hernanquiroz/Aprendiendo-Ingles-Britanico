@@ -5,6 +5,8 @@ import edge_tts
 import language_tool_python
 import streamlit as st
 
+from lessons import LECCIONES
+
 # ---------------- Configuración ----------------
 st.set_page_config(page_title="🇬🇧 Learn British English", page_icon="🎓",
                    layout="wide")
@@ -25,6 +27,7 @@ st.markdown(
         border-radius: 0.9rem; padding: 1.2rem 1.4rem; margin-bottom: 1rem;
       }
       .credit { text-align: center; padding: 1rem 0 0.2rem; font-size: 0.9rem; }
+      .credit b { font-size: 1rem; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -43,129 +46,15 @@ st.markdown(
 # ---------------- Voces británicas ----------------
 VOICES = {
     "🇬🇧 Voz masculina (Ryan)": "en-GB-RyanNeural",
-    "🇬🇧 Voz femenina (Sonia)": "en-GB-SoniaNeural",
     "🇬🇧 Voz masculina (Thomas)": "en-GB-ThomasNeural",
+    "🇬🇧 Voz femenina (Sonia)": "en-GB-SoniaNeural",
     "🇬🇧 Voz femenina (Libby)": "en-GB-LibbyNeural",
 }
 
-# ---------------- Contenido: lecciones por nivel ----------------
-LECCIONES = {
-    "A1 – Principiante": [
-        {
-            "titulo": "My Family",
-            "parrafo": ("My name is Tom. I live in a small flat in London with my "
-                        "family. My mother is a nurse and my father is a bus driver. "
-                        "I have one sister. Her name is Emma. She is seven years old. "
-                        "We have a cat called Whiskers. Every morning, I eat toast "
-                        "and drink tea for breakfast."),
-        },
-        {
-            "titulo": "A Day at School",
-            "parrafo": ("I go to school by bus. My school is near the park. "
-                        "Lessons start at nine o'clock. My favourite subject is "
-                        "history. At lunchtime, I eat sandwiches with my friends. "
-                        "After school, I play football in the garden."),
-        },
-    ],
-    "A2 – Elemental": [
-        {
-            "titulo": "A Weekend in the Countryside",
-            "parrafo": ("Last weekend, we visited my grandmother in the countryside. "
-                        "The weather was lovely, so we went for a long walk across "
-                        "the fields. We saw sheep and cows everywhere. My grandmother "
-                        "cooked a traditional Sunday roast with vegetables from her "
-                        "garden. It was delicious."),
-        },
-        {
-            "titulo": "My Favourite Hobby",
-            "parrafo": ("I really enjoy reading books about British history. I "
-                        "usually read in the evenings, after finishing my homework. "
-                        "At the moment, I am reading a novel about the Victorians. "
-                        "Reading helps me learn new vocabulary and improves my "
-                        "writing too."),
-        },
-    ],
-    "B1 – Intermedio": [
-        {
-            "titulo": "Working in a Café",
-            "parrafo": ("I have been working in a busy café in Manchester since "
-                        "January. Although it can be tiring, I love meeting "
-                        "customers from all over the world. My colleagues are "
-                        "friendly, and we often help each other during the busiest "
-                        "hours. In the future, I would like to open my own little "
-                        "tea shop by the seaside."),
-        },
-        {
-            "titulo": "The Weather in Britain",
-            "parrafo": ("British people are famous for talking about the weather, "
-                        "and there is a good reason for it: it changes constantly. "
-                        "One moment the sky is grey and it is drizzling, and the "
-                        "next the sun is shining. Because of this, most people "
-                        "carry an umbrella wherever they go, just in case."),
-        },
-    ],
-    "B2 – Intermedio alto": [
-        {
-            "titulo": "The Importance of Public Libraries",
-            "parrafo": ("Public libraries have played a remarkable role in British "
-                        "society for centuries. Not only do they provide free access "
-                        "to books and the internet, but they also serve as community "
-                        "hubs where people of all ages can learn new skills. Despite "
-                        "budget cuts in recent years, many libraries have adapted by "
-                        "offering workshops, coding clubs, and reading groups, which "
-                        "proves how valuable they remain to local communities."),
-        },
-        {
-            "titulo": "Sustainable Travel",
-            "parrafo": ("More and more travellers are choosing sustainable options "
-                        "when planning their holidays. Rather than flying, some "
-                        "people now take the train across Europe, enjoying the "
-                        "scenery while reducing their carbon footprint. However, "
-                        "critics argue that slow travel is a luxury that not everyone "
-                        "can afford, which raises important questions about fairness "
-                        "in the movement towards greener tourism."),
-        },
-    ],
-    "C1 – Avanzado": [
-        {
-            "titulo": "The Evolution of the English Language",
-            "parrafo": ("The English language has undergone profound transformations "
-                        "throughout its history, absorbing vocabulary from Latin, "
-                        "French, and Norse, among countless other sources. What "
-                        "distinguishes British English from its American counterpart "
-                        "is not merely spelling or pronunciation, but subtle "
-                        "differences in idiom and register. Linguists contend that "
-                        "these variations, far from being deficiencies, enrich the "
-                        "language and reflect the cultural identity of their "
-                        "speakers."),
-        },
-        {
-            "titulo": " remote Work and Society",
-            "parrafo": ("The widespread adoption of remote work has reshaped urban "
-                        "life in ways few could have anticipated. City centres, once "
-                        "bustling with commuters, have had to reinvent themselves to "
-                        "attract visitors, while rural areas have experienced an "
-                        "unprecedented influx of professionals seeking a better "
-                        "quality of life. Whether this shift will endure remains to "
-                        "be seen, yet its implications for housing, transport, and "
-                        "social cohesion are already unmistakable."),
-        },
-    ],
-    "C2 – Maestría": [
-        {
-            "titulo": "On the Subtlety of Irony",
-            "parrafo": ("Irony, that most British of rhetorical devices, thrives on "
-                        "the tension between what is said and what is meant. Its "
-                        "deployment requires not only linguistic dexterity but also a "
-                        "sophisticated awareness of context and audience, for irony "
-                        "poorly executed is indistinguishable from sincerity. "
-                        "Scholars have long debated whether irony constitutes a "
-                        "defence mechanism against earnestness or, conversely, a "
-                        "vehicle through which uncomfortable truths may be uttered "
-                        "with plausible deniability."),
-        },
-    ],
-}
+# ---------------- Estado de sesión ----------------
+ss = st.session_state
+if "resumen_visto" not in ss:
+    ss.resumen_visto = None  # (nivel, leccion_idx) cuyo resultado mostrar
 
 # ---------------- Utilidades ----------------
 @st.cache_resource
@@ -175,6 +64,7 @@ def obtener_correccion():
 
 
 async def generar_fragmento(texto: str, voz: str, rate: str) -> bytes:
+    """Genera el audio de un fragmento con reintentos (evita fallos 429)."""
     for intento in range(3):
         buffer = bytearray()
         try:
@@ -198,6 +88,20 @@ def generar_audio(texto: str, voz: str, rate: str) -> bytes:
     except Exception:
         return b""
 
+
+def dividir_en_fragmentos(texto: str, maximo: int = 2500) -> list:
+    trozos, actual = [], ""
+    for linea in texto.splitlines():
+        if len(actual) + len(linea) + 1 > maximo:
+            if actual.strip():
+                trozos.append(actual)
+            actual = linea
+        else:
+            actual += "\n" + linea
+    if actual.strip():
+        trozos.append(actual)
+    return trozos
+
 # ---------------- Interfaz ----------------
 col_config, col_main = st.columns([1, 3])
 
@@ -208,7 +112,7 @@ with col_config:
     lecciones = LECCIONES[nivel]
     leccion_idx = st.selectbox(
         "📗 Lección", range(len(lecciones)),
-        format_func=lambda i: lecciones[i]["titulo"])
+        format_func=lambda i: f"{i + 1}. {lecciones[i]['titulo']}")
     leccion = lecciones[leccion_idx]
 
     st.markdown("**🎤 Voz británica**")
@@ -217,6 +121,10 @@ with col_config:
 
     velocidad = st.select_slider(
         "Velocidad", options=["-25%", "Normal", "+25%"], value="Normal")
+
+    st.divider()
+    st.markdown("#### 📚 Progreso")
+    st.metric("Lecciones", f"{leccion_idx + 1} de {len(lecciones)}")
 
     st.divider()
     st.markdown(
@@ -231,9 +139,10 @@ with col_main:
     st.markdown(f"#### {leccion['titulo']} · _{nivel}_")
     st.write(leccion["parrafo"])
 
-    col_escuchar, col_espacio = st.columns([1, 2])
+    col_escuchar, col_dlc = st.columns([1, 1])
     if col_escuchar.button("🔊 Escuchar párrafo", use_container_width=True):
-        rate = "-25%" if velocidad == "-25%" else "+25%" if velocidad == "+25%" else "+0%"
+        rate = ("-25%" if velocidad == "-25%"
+                else "+25%" if velocidad == "+25%" else "+0%")
         with st.spinner("Generando audio..."):
             audio = generar_audio(leccion["parrafo"], VOICES[voz_nombre], rate)
         if audio:
@@ -245,17 +154,25 @@ with col_main:
 
     # ---- Cajita 2: escritura del resumen ----
     st.markdown("<div class='card'><b>✍️ Tu resumen</b> — escribe en inglés "
-                "un resumen del párrafo. Al enviarlo, el sistema marcará "
+                "un resumen del párrafo. Al revisarlo, el sistema marcará "
                 "errores de ortografía y gramática (inglés británico).</div>",
                 unsafe_allow_html=True)
-    resumen = st.text_area("Escribe aquí tu resumen:", height=160,
-                           key=f"resumen_{nivel}_{leccion_idx}")
 
-    if st.button("📝 Revisar mi resumen", type="primary", use_container_width=True):
+    clave_actual = (nivel, leccion_idx)
+    resumen = st.text_area(
+        "Escribe aquí tu resumen:", height=160,
+        key=f"resumen_{nivel}_{leccion_idx}")
+
+    # Mostrar resultado guardado si el usuario cambió de lección
+    if ss.resumen_visto is not None and ss.resumen_visto != clave_actual:
+        ss.resumen_visto = None
+
+    if st.button("📝 Revisar mi resumen", type="primary",
+                 use_container_width=True):
         if not resumen.strip():
             st.warning("Escribe tu resumen primero.")
         else:
-            # 1) Corrección con LanguageTool
+            # 1) Corrección con LanguageTool (en-GB)
             with st.spinner("Revisando ortografía y gramática..."):
                 try:
                     herramienta = obtener_correccion()
@@ -264,37 +181,50 @@ with col_main:
                     coincidencias = []
                     st.error(f"No pude conectar con el corrector: {e}")
 
-            if not coincidencias:
-                st.success("🎉 ¡Perfecto! No encontré errores de ortografía "
-                           "ni gramática en inglés británico.")
-            else:
-                st.warning(f"Encontré **{len(coincidencias)} problema(s)**. "
-                           "Revisa cada sugerencia:")
-                for i, c in enumerate(coincidencias, 1):
-                    error = resumen[c.offset: c.offset + c.errorLength]
-                    st.markdown(
-                        f"**{i}.** 🚫 «{error}» → ✅ "
-                        f"**{c.replacements[0] if c.replacements else '—'}** "
-                        f"_({c.message})_")
+            st.session_state["resultado"] = {
+                "clase": "ok" if not coincidencias else "errores",
+                "coincidencias": [
+                    {"error": resumen[c.offset: c.offset + c.errorLength],
+                     "sugerencia": c.replacements[0] if c.replacements else "—",
+                     "mensaje": c.message}
+                    for c in coincidencias
+                ],
+                "n_palabras": len(resumen.split()),
+                "claves": len({
+                    p.strip(".,;:!?()'\"").lower()
+                    for p in resumen.split()
+                } & {
+                    p.strip(".,;:!?()'\"").lower()
+                    for p in leccion["parrafo"].split()
+                }),
+            }
+            ss.resumen_visto = clave_actual
+            st.rerun()
 
-            # 2) Análisis básico del resumen
-            st.divider()
-            palabras_usuario = {
-                p.strip(".,;:!?()'\"").lower() for p in resumen.split()}
-            palabras_parrafo = {
-                p.strip(".,;:!?()'\"").lower() for p in leccion["parrafo"].split()}
-            claves = palabras_usuario & palabras_parrafo
-            st.markdown(
-                f"📊 **Análisis:** escribiste **{len(resumen.split())} palabras** "
-                f"y usaste **{len(claves)}** términos clave del párrafo "
-                "(original, sin conjugar).")
-            longitud = len(resumen.split())
-            if longitud < 15:
-                st.info("💡 Intenta resumir con al menos 15–20 palabras para "
-                        "practicar más.")
-            else:
-                st.info("💡 Buen trabajo. Compara tu resumen con el párrafo "
-                        "y escucha de nuevo el audio para mejorar tu fluidez.")
+    # Mostrar el resultado de la revisión
+    resultado = st.session_state.get("resultado")
+    if resultado and ss.resumen_visto == clave_actual:
+        if resultado["clase"] == "ok":
+            st.success("🎉 ¡Perfecto! No encontré errores de ortografía "
+                       "ni gramática en inglés británico.")
+        else:
+            st.warning(f"Encontré **{len(resultado['coincidencias'])} "
+                       "problema(s)**. Revisa cada sugerencia:")
+            for i, c in enumerate(resultado["coincidencias"], 1):
+                st.markdown(
+                    f"**{i}.** 🚫 «{c['error']}» → ✅ **{c['sugerencia']}** "
+                    f"_({c['mensaje']})_")
+
+        st.divider()
+        st.markdown(
+            f"📊 **Análisis:** escribiste **{resultado['n_palabras']} palabras** "
+            f"y usaste **{resultado['claves']}** términos clave del párrafo.")
+        if resultado["n_palabras"] < 15:
+            st.info("💡 Intenta resumir con al menos 15–20 palabras para "
+                    "practicar más.")
+        else:
+            st.info("💡 Buen trabajo. Escucha de nuevo el audio para mejorar "
+                    "tu fluidez.")
 
 # ---------------- Créditos ----------------
 st.markdown(
