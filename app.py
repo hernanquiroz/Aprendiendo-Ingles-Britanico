@@ -1,14 +1,20 @@
 import asyncio
+import base64
+import io
 import json
 import os
 import re
 import time
+from collections import Counter
+from datetime import datetime
 
 import edge_tts
 import language_tool_python
+import numpy as np
 import requests
 import streamlit as st
 from audio_recorder_streamlit import audio_recorder
+from streamlit_drawable_canvas import st_canvas
 
 from lessons import LECCIONES
 
@@ -42,13 +48,13 @@ st.markdown(
     """
     <div class="hero">
       <h1>🇬🇧 Learn British English</h1>
-      <p>De cero (A1) hasta C2 — lee, escucha, escribe, habla y recibe feedback inteligente.</p>
+      <p>De cero (A1) hasta C2 — lee, escucha, escribe (teclado o mano) y habla.</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-# ---------------- Voces británicas ----------------
+# ---------------- Constantes ----------------
 VOICES = {
     "🇬🇧 Voz masculina (Ryan)": "en-GB-RyanNeural",
     "🇬🇧 Voz masculina (Thomas)": "en-GB-ThomasNeural",
@@ -57,14 +63,19 @@ VOICES = {
 }
 
 GROQ_MODEL = "openai/gpt-oss-120b"
+GROQ_VISION_MODEL = "qwen/qwen3.6-27b"
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_TRANSCRIBE_URL = "https://api.groq.com/openai/v1/audio/transcriptions"
 WHISPER_MODEL = "whisper-large-v3"
 
 # ---------------- Estado de sesión ----------------
 ss = st.session_state
-if "resumen_visto" not in ss:
-    ss.resumen_visto = None
+for clave, valor in {
+    "resumen_visto": None,
+    "progreso": {},        # {(nivel, idx): {"notas": [], "precisiones": []}}
+}.items():
+    if clave not in ss:
+        ss[clave] = valor
 
 # ---------------- Utilidades ----------------
 @st.cache_resource
@@ -105,8 +116,7 @@ def obtener_api_key() -> str:
 def evaluar_resumen_llm(parrafo: str, resumen: str, nivel: str):
     api_key = obtener_api_key()
     if not api_key:
-        return {"error": "API key no encontrada. Verifica LLM_API_KEY en "
-                         "Settings → Secrets y reinicia la app."}
+        return {"error": "API key no encontrada en Secrets."}
 
     system = (
         "You are a British English teacher assessing a summary. "
@@ -121,92 +131,105 @@ def evaluar_resumen_llm(parrafo: str, resumen: str, nivel: str):
     )
     user_msg = (f"Nivel objetivo: {nivel}\n\nPárrafo original:\n{parrafo}\n\n"
                 f"Resumen del estudiante:\n{resumen}")
-
     try:
-        respuesta = requests.post(
-            GROQ_URL,
-            headers={"Authorization": f"Bearer {api_key}",
-                     "Content-Type": "application/json"},
-            json={
-                "model": GROQ_MODEL,
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user_msg},
-                ],
-                "temperature": 0.3,
-                "response_format": {"type": "json_object"},
-            },
-            timeout=60,
-        )
-        if respuesta.status_code != 200:
-            return {"error": f"Groq respondió {respuesta.status_code}: "
-                             f"{respuesta.text[:300]}"}
-        contenido = respuesta.json()["choices"][0]["message"]["content"]
-        return json.loads(contenido)
+        r = requests.post(GROQ_URL,
+                          headers={"Authorization": f"Bearer {api_key}",
+                                   "Content-Type": "application/json"},
+                          json={"model": GROQ_MODEL,
+                                "messages": [
+                                    {"role": "system", "content": system},
+                                    {"role": "user", "content": user_msg}],
+                                "temperature": 0.3,
+                                "response_format": {"type": "json_object"}},
+                          timeout=60)
+        if r.status_code != 200:
+            return {"error": f"Groq {r.status_code}: {r.text[:300]}"}
+        return json.loads(r.json()["choices"][0]["message"]["content"])
     except requests.exceptions.Timeout:
-        return {"error": "La petición a Groq tardó demasiado (timeout)."}
+        return {"error": "Timeout. Inténtalo de nuevo."}
     except json.JSONDecodeError:
-        return {"error": "Groq devolvió una respuesta no válida en JSON."}
+        return {"error": "Respuesta JSON no válida."}
     except Exception as e:
         return {"error": f"Error inesperado: {e}"}
 
 
 def transcribir_audio_groq(audio_bytes: bytes) -> dict:
-    """Transcribe la grabación con Whisper (Groq). Devuelve texto o error."""
     api_key = obtener_api_key()
     if not api_key:
         return {"error": "API key no encontrada."}
     try:
-        respuesta = requests.post(
+        r = requests.post(
             GROQ_TRANSCRIBE_URL,
             headers={"Authorization": f"Bearer {api_key}"},
             files={"file": ("grabacion.webm", audio_bytes, "audio/webm")},
             data={"model": WHISPER_MODEL, "language": "en",
                   "response_format": "json"},
-            timeout=120,
-        )
-        if respuesta.status_code != 200:
-            return {"error": f"Whisper respondió {respuesta.status_code}: "
-                             f"{respuesta.text[:300]}"}
-        return {"texto": respuesta.json().get("text", "")}
-    except requests.exceptions.Timeout:
-        return {"error": "La transcripción tardó demasiado. Prueba con una "
-                         "grabación más corta."}
+            timeout=120)
+        if r.status_code != 200:
+            return {"error": f"Whisper {r.status_code}: {r.text[:300]}"}
+        return {"texto": r.json().get("text", "")}
     except Exception as e:
         return {"error": f"Error inesperado: {e}"}
 
 
 def normalizar_palabras(texto: str) -> list:
-    """Convierte el texto en lista de palabras limpias (minúsculas)."""
     return [p for p in re.split(r"[^a-zA-Z']+", texto.lower()) if p]
 
 
 def comparar_pronunciacion(objetivo: str, dicho: str) -> dict:
-    """Compara lo que dijiste con el texto objetivo, palabra por palabra."""
-    palabras_objetivo = normalizar_palabras(objetivo)
-    palabras_dichas = normalizar_palabras(dicho)
+    obj, dic = normalizar_palabras(objetivo), normalizar_palabras(dicho)
+    c_obj, c_dic = Counter(obj), Counter(dic)
+    correctas = c_obj & c_dic
+    omitidas = c_obj - correctas
+    extras = c_dic - correctas
+    n_total = len(obj)
+    n_ok = sum(correctas.values())
+    return {"precision": round(100 * n_ok / n_total, 1) if n_total else 0,
+            "correctas": list(correctas.elements()),
+            "omitidas": list(omitidas.elements()),
+            "extras": list(extras.elements()),
+            "n_objetivo": n_total}
 
-    #conteo para detectar omitidas y extra
-    from collections import Counter
-    cuenta_objetivo = Counter(palabras_objetivo)
-    cuenta_dichas = Counter(palabras_dichas)
 
-    correctas = cuenta_objetivo & cuenta_dichas     # intersección (mínimos)
-    omitidas = cuenta_objetivo - correctas           # faltaron por decir
-    extras = cuenta_dichas - correctas                # dijiste de más
+def transcribir_escritura_groq(imagen_png: bytes) -> dict:
+    """OCR de escritura a mano con el modelo de visión de Groq."""
+    api_key = obtener_api_key()
+    if not api_key:
+        return {"error": "API key no encontrada en Secrets."}
+    b64 = base64.b64encode(imagen_png).decode()
+    try:
+        r = requests.post(
+            GROQ_URL,
+            headers={"Authorization": f"Bearer {api_key}",
+                     "Content-Type": "application/json"},
+            json={"model": GROQ_VISION_MODEL,
+                  "messages": [{"role": "user", "content": [
+                      {"type": "text",
+                       "text": "This is a photo of handwritten English text. "
+                               "Transcribe the handwritten text exactly, with "
+                               "correct English spelling. Reply ONLY with the "
+                               "transcribed text, nothing else."},
+                      {"type": "image_url",
+                       "image_url": {"url": f"data:image/png;base64,{b64}"}}]}],
+                  "temperature": 0},
+            timeout=90)
+        if r.status_code != 200:
+            return {"error": f"OCR {r.status_code}: {r.text[:300]}"}
+        return {"texto": r.json()["choices"][0]["message"]["content"].strip()}
+    except requests.exceptions.Timeout:
+        return {"error": "El OCR tardó demasiado. Escribe un poco menos y "
+                         "prueba de nuevo."}
+    except Exception as e:
+        return {"error": f"Error inesperado: {e}"}
 
-    n_total = len(palabras_objetivo)
-    n_correctas = sum(correctas.values())
-    precision = round(100 * n_correctas / n_total, 1) if n_total else 0
 
-    return {
-        "precision": precision,
-        "correctas": list(correctas.elements()),
-        "omitidas": list(omitidas.elements()),
-        "extras": list(extras.elements()),
-        "n_objetivo": n_total,
-        "n_dichas": len(palabras_dichas),
-    }
+def registrar_progreso(clave, nota=None, precision=None):
+    """Guarda un intento en el progreso (nota del resumen o precisión)."""
+    ss.progreso.setdefault(clave, {"notas": [], "precisiones": []})
+    if nota is not None:
+        ss.progreso[clave]["notas"].append(nota)
+    if precision is not None:
+        ss.progreso[clave]["precisiones"].append(precision)
 
 # ---------------- Interfaz ----------------
 col_config, col_main = st.columns([1, 3])
@@ -229,8 +252,50 @@ with col_config:
         "Velocidad", options=["-25%", "Normal", "+25%"], value="Normal")
 
     st.divider()
-    st.markdown("#### 📚 Progreso")
-    st.metric("Lecciones", f"{leccion_idx + 1} de {len(lecciones)}")
+
+    # ---- Progreso ----
+    st.markdown("#### 📈 Mi progreso")
+    if ss.progreso:
+        n_registros = sum(len(v["notas"]) + len(v["precisiones"])
+                          for v in ss.progreso.values())
+        st.metric("Intentos registrados", n_registros)
+        with st.expander("Ver detalle"):
+            for (niv, idx), datos in ss.progreso.items():
+                titulo = LECCIONES[niv][idx]["titulo"]
+                notas = datos["notas"]
+                precs = datos["precisiones"]
+                partes = [f"{titulo} ({niv})"]
+                if notas:
+                    partes.append(f"Resumen: {sum(notas)/len(notas):.1f}/10 "
+                                  f"({len(notas)} intentos)")
+                if precs:
+                    partes.append(f"Habla: {sum(precs)/len(precs):.0f}% "
+                                  f"({len(precs)} intentos)")
+                st.markdown("- " + " · ".join(partes))
+
+        # Exportar progreso
+        progreso_json = json.dumps(
+            {f"{k[0]}|{k[1]}": v for k, v in ss.progreso.items()},
+            ensure_ascii=False)
+        st.download_button("⬇️ Guardar progreso (JSON)", progreso_json,
+                           "mi_progreso.json", "application/json",
+                           use_container_width=True)
+    else:
+        st.caption("Aún no hay intentos registrados.")
+
+    # Importar progreso
+    archivo_progreso = st.file_uploader("📂 Restaurar progreso",
+                                        type=["json"],
+                                        key="import_progreso")
+    if archivo_progreso is not None:
+        try:
+            datos = json.load(archivo_progreso)
+            ss.progreso = {tuple(k.split("|")): v for k, v in datos.items()}
+            ss.progreso = {(k[0], int(k[1])): v
+                           for k, v in ss.progreso.items()}
+            st.success("Progreso restaurado ✔️")
+        except Exception:
+            st.error("Archivo de progreso no válido.")
 
     if obtener_api_key():
         st.caption("🤖 Feedback inteligente: activo")
@@ -262,7 +327,7 @@ with col_main:
 
     st.divider()
 
-    # ---- Cajita 3: hablar y corrección de pronunciación ----
+    # ---- Cajita 3: hablar ----
     st.markdown("<div class='card'><b>🎤 Practica hablando</b> — pulsa el "
                 "micrófono y lee el párrafo en voz alta. El sistema "
                 "transcribirá lo que dijiste y comparará palabra por "
@@ -279,29 +344,25 @@ with col_main:
         if st.button("🤓 Analizar mi pronunciación", type="primary",
                      use_container_width=True, key="analizar_habla"):
             with st.spinner("Transcribiendo con Whisper..."):
-                resultado_transcripcion = transcribir_audio_groq(grabacion)
+                res_trans = transcribir_audio_groq(grabacion)
 
-            if "error" in resultado_transcripcion:
-                st.error(f"**Transcripción falló:** "
-                         f"{resultado_transcripcion['error']}")
+            if "error" in res_trans:
+                st.error(f"**Transcripción falló:** {res_trans['error']}")
             else:
-                texto_dicho = resultado_transcripcion["texto"]
-                comparacion = comparar_pronunciacion(
-                    leccion["parrafo"], texto_dicho)
-
+                comp = comparar_pronunciacion(leccion["parrafo"],
+                                              res_trans["texto"])
+                registrar_progreso((nivel, leccion_idx),
+                                    precision=comp["precision"])
                 st.session_state["habla_resultado"] = {
                     "clave": (nivel, leccion_idx),
-                    "transcripcion": texto_dicho,
-                    "comparacion": comparacion,
-                }
+                    "transcripcion": res_trans["texto"],
+                    "comparacion": comp}
 
-    # Mostrar resultado del habla
     habla = st.session_state.get("habla_resultado")
     if habla and habla["clave"] == (nivel, leccion_idx):
         comp = habla["comparacion"]
         st.divider()
         st.markdown("## 🤓 Resultado de tu habla")
-
         precision = comp["precision"]
         if precision >= 90:
             st.success(f"### 🏆 Precisión: **{precision}%** — ¡Prácticamente "
@@ -312,45 +373,78 @@ with col_main:
         else:
             st.error(f"### 🏆 Precisión: **{precision}%** — Escucha el audio "
                      "nativo y repite con calma.")
-
-        st.markdown(f"**Lo que entendí que dijiste:**")
+        st.markdown("**Lo que entendí que dijiste:**")
         st.info(f"«{habla['transcripcion']}»")
-
         col_bien, col_mal = st.columns(2)
         with col_bien:
-            st.markdown(f"**✅ Palabras correctas** ({len(comp['correctas'])} "
-                        f"de {comp['n_objetivo']}):")
+            st.markdown(f"**✅ Correctas** ({len(comp['correctas'])} de "
+                        f"{comp['n_objetivo']}):")
             if comp["correctas"]:
                 st.markdown(" ".join(f"`{p}`" for p in comp["correctas"]))
         with col_mal:
-            st.markdown(f"**❌ Palabras omitidas o mal pronunciadas** "
+            st.markdown(f"**❌ Omitidas o mal pronunciadas** "
                         f"({len(comp['omitidas'])}):")
             if comp["omitidas"]:
                 st.markdown(" ".join(f"`{p}`" for p in comp["omitidas"]))
             else:
                 st.markdown("Ninguna — ¡brillante! 🎉")
-
         if comp["extras"]:
             with st.expander("ℹ️ Palabras extra detectadas"):
                 st.markdown(" ".join(f"`{p}`" for p in comp["extras"]))
-
-        st.info("💡 Consejo: escucha el audio nativo, repite las palabras "
-                "omitidas en voz alta y graba de nuevo para mejorar tu "
-                "puntuación.")
 
     st.divider()
 
     # ---- Cajita 2: resumen ----
     st.markdown("<div class='card'><b>✍️ Tu resumen</b> — escribe en inglés "
-                "un resumen del párrafo. Recibirás corrección ortográfica, "
+                "un resumen del párrafo con <b>teclado</b> o <b>a mano</b> "
+                "(lápiz electrónico/touch). Recibirás corrección ortográfica, "
                 "gramatical y feedback pedagógico inteligente.</div>",
                 unsafe_allow_html=True)
 
-    clave_actual = (nivel, leccion_idx)
-    resumen = st.text_area(
-        "Escribe aquí tu resumen:", height=160,
-        key=f"resumen_{nivel}_{leccion_idx}")
+    modo = st.radio("¿Cómo quieres escribir?", ["⌨️ Teclado", "✍️ A mano"],
+                    horizontal=True, key="modo_escritura")
 
+    resumen = ""
+    if modo == "⌨️ Teclado":
+        resumen = st.text_area("Escribe aquí tu resumen:", height=160,
+                               key=f"resumen_{nivel}_{leccion_idx}")
+    else:
+        st.markdown("Escribe con el dedo, lápiz o mouse en el recuadro blanco:")
+        canvas_result = st_canvas(
+            fill_color="rgba(255,255,255,0)",
+            stroke_width=3, stroke_color="#000000",
+            background_color="#FFFFFF",
+            height=250, drawing_mode="freedraw",
+            key=f"canvas_{nivel}_{leccion_idx}")
+
+        if st.button("🔍 Leer mi escritura (OCR)", use_container_width=True,
+                     key="ocr_btn"):
+            if canvas_result.image_data is not None:
+                from PIL import Image
+                img = Image.fromarray(
+                    canvas_result.image_data.astype("uint8"))
+                buffer = io.BytesIO()
+                img.save(buffer, format="PNG")
+                with st.spinner("Reconociendo tu escritura..."):
+                    res_ocr = transcribir_escritura_groq(buffer.getvalue())
+                if "error" in res_ocr:
+                    st.error(f"**OCR falló:** {res_ocr['error']}")
+                else:
+                    st.session_state["ocr_texto"] = res_ocr["texto"]
+                    st.rerun()
+            else:
+                st.warning("Escribe algo primero en el recuadro.")
+
+        if "ocr_texto" in st.session_state:
+            st.success("🤖 **Texto reconocido:**")
+            st.markdown(f"> {st.session_state['ocr_texto']}")
+            st.caption("Revísalo y córregelo antes de enviarlo al revisor.")
+            resumen = st.text_area(
+                "Edita si es necesario y luego revisa:",
+                value=st.session_state["ocr_texto"], height=140,
+                key=f"resumen_ocr_{nivel}_{leccion_idx}")
+
+    clave_actual = (nivel, leccion_idx)
     if ss.resumen_visto is not None and ss.resumen_visto != clave_actual:
         ss.resumen_visto = None
 
@@ -361,8 +455,7 @@ with col_main:
         else:
             with st.spinner("Revisando ortografía y gramática..."):
                 try:
-                    herramienta = obtener_correccion()
-                    coincidencias = herramienta.check(resumen)
+                    coincidencias = obtener_correccion().check(resumen)
                 except Exception:
                     coincidencias = []
 
@@ -371,24 +464,26 @@ with col_main:
                     {"error": resumen[c.offset: c.offset + c.errorLength],
                      "sugerencia": c.replacements[0] if c.replacements else "—",
                      "mensaje": c.message}
-                    for c in coincidencias
-                ],
+                    for c in coincidencias],
                 "n_palabras": len(resumen.split()),
                 "claves": len({
                     p.strip(".,;:!?()'\"").lower() for p in resumen.split()
                 } & {
                     p.strip(".,;:!?()'\"").lower()
-                    for p in leccion["parrafo"].split()
-                }),
+                    for p in leccion["parrafo"].split()}),
             }
             ss.resumen_visto = clave_actual
 
             with st.spinner("🤖 Analizando tu resumen..."):
                 st.session_state["feedback"] = evaluar_resumen_llm(
                     leccion["parrafo"], resumen, nivel)
+
+            # Registrar la nota en el progreso
+            fb = st.session_state.get("feedback")
+            if fb and "nota" in fb:
+                registrar_progreso(clave_actual, nota=fb["nota"])
             st.rerun()
 
-    # ---- Resultado del resumen ----
     resultado = st.session_state.get("resultado")
     feedback = st.session_state.get("feedback")
     if resultado and ss.resumen_visto == clave_actual:
@@ -411,7 +506,6 @@ with col_main:
             st.error(f"🤖 **Feedback inteligente falló:** {feedback['error']}")
         else:
             st.markdown("## 🤖 Feedback del profesor")
-
             nota = feedback.get("nota")
             if nota is not None:
                 if nota >= 8:
@@ -422,7 +516,6 @@ with col_main:
                 else:
                     st.error(f"### ⭐ Nota: **{nota}/10** — Repasa el párrafo "
                              "e inténtalo de nuevo.")
-
             col_ok, col_falta = st.columns(2)
             with col_ok:
                 capturadas = feedback.get("captura_ideas", [])
@@ -434,10 +527,8 @@ with col_main:
                 st.markdown(f"**❗ Ideas que faltan** ({len(faltantes)}):")
                 for idea in faltantes:
                     st.markdown(f"- ➕ {idea}")
-
             if feedback.get("vocabulario"):
                 st.markdown(f"**🗣️ Vocabulario:** {feedback['vocabulario']}")
-
             sugerencias = feedback.get("sugerencias", [])
             if sugerencias:
                 st.markdown("**💡 Sugerencias para mejorar:**")
@@ -449,8 +540,7 @@ with col_main:
             f"📊 **Análisis:** escribiste **{resultado['n_palabras']} palabras** "
             f"y usaste **{resultado['claves']}** términos clave del párrafo.")
         if resultado["n_palabras"] < 15:
-            st.info("💡 Intenta resumir con al menos 15–20 palabras para "
-                    "practicar más.")
+            st.info("💡 Intenta resumir con al menos 15–20 palabras.")
 
 # ---------------- Créditos ----------------
 st.markdown(
