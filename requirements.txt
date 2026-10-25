@@ -1,8 +1,5 @@
 streamlit
 edge-tts>=7.2.8
-language-tool-python
-requests
-audio-recorder-streamlit
-streamlit-drawable-canvas
-pillow
-numpy
+gTTS
+pypdf
+python-docx
